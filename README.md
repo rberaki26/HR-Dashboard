@@ -5,7 +5,7 @@ This analysis explores employee attrition and performance using the IBM HR Analy
 
 
 🔧 **1. Data Preparation & Cleaning**
-You imported and structured the dataset using:
+I imported and structured the dataset using:
 
 read_excel() to load the Excel file
 
@@ -21,7 +21,7 @@ This ensures proper statistical handling of ordinal HR metrics.
 
 
 🧪 2. **Sampling for Exploration**
-You created a reproducible 70% sample for exploratory analysis:
+I created a reproducible 70% sample for exploratory analysis:
 
 “team_work_samp <- sample_frac(team_div_work_data, size = 0.7)”
 
@@ -35,7 +35,6 @@ Attrition
 Attrition varies across job roles, satisfaction levels, and overtime status.
 
 Job Roles
-From your count table:
 
 “Sales Executive: 230, Research Scientist: 204, Laboratory Technician: 184…”
 
@@ -55,7 +54,7 @@ Job satisfaction is widely distributed, with meaningful variation across roles
 
 
 🎨 **4. Visualizations**
-Your document includes several strong ggplot2 visualizations:
+The document includes several strong ggplot2 visualizations:
 
 a. Job Role Distribution
 A horizontal bar chart showing percentage of employees in each role.
@@ -69,17 +68,3 @@ c. Relative Gender Percentages
 A second visualization showing gender percentages within each job role.
 
 These plots demonstrate your ability to communicate HR insights visually.
-
-
-🧠 **5. What This Project Demonstrates**
-This project showcases your ability to:
-
-Clean and structure HR datasets
-
-Convert raw data into meaningful factors
-
-Perform exploratory analysis
-
-Visualize workforce patterns
-
-Communicate insights relevant to HR leaders and people analytics teams
