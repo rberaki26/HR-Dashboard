@@ -3,6 +3,7 @@ A data exploration and visualization project using R
 
 This analysis explores employee attrition and performance using the IBM HR Analytics Employee Attrition & Performance dataset (1,470 employees, 35 variables). The workflow includes data import, cleaning, transformation, sampling, and visualization using tidyverse, readxl, and here.
 
+
 🔧 1. Data Preparation & Cleaning
 You imported and structured the dataset using:
 
@@ -18,12 +19,14 @@ Conversion of satisfaction and involvement metrics to ordered factors, e.g.:
 
 This ensures proper statistical handling of ordinal HR metrics.
 
+
 🧪 2. Sampling for Exploration
 You created a reproducible 70% sample for exploratory analysis:
 
 “team_work_samp <- sample_frac(team_div_work_data, size = 0.7)”
 
 This allows efficient plotting and testing without altering the original dataset.
+
 
 📈 3. Key Workforce Insights
 Attrition
@@ -50,6 +53,7 @@ Most employees rate WorkLifeBalance as 3 or 4
 
 Job satisfaction is widely distributed, with meaningful variation across roles
 
+
 🎨 4. Visualizations
 Your document includes several strong ggplot2 visualizations:
 
@@ -65,6 +69,7 @@ c. Relative Gender Percentages
 A second visualization showing gender percentages within each job role.
 
 These plots demonstrate your ability to communicate HR insights visually.
+
 
 🧠 5. What This Project Demonstrates
 This project showcases your ability to:
