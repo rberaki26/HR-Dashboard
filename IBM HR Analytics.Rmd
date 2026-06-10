@@ -1,0 +1,245 @@
+---
+title: 'Data Exploration: IBM Employee Attrition & Performance'
+author: "Robel Beraki"
+date: "`r lubridate::now(tzone = 'America/Chicago')`"
+output:
+  word_document:
+    toc: true
+    toc_depth: '2'
+  pdf_document:
+    toc: true
+    toc_depth: '2'
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    theme: yeti
+    highlight: zenburn
+    df_print: paged
+    code_folding: show
+editor_options:
+  chunk_output_type: console
+---
+
+# R Markdown
+
+```{r, setup, include = FALSE}
+### specify global settings for all code chunks
+## call function
+knitr::opts_chunk$set(
+  ## print code for subsequent code chunks
+  echo = TRUE,
+  ## do not print messages
+  message = FALSE,
+  ## do not print warnings
+  warning = FALSE
+)
+```
+
+# Packages
+
+1. [here](https://here.r-lib.org);
+2. [tidyverse](https://www.tidyverse.org);
+3. [readxl](https://readxl.tidyverse.org). 
+
+```{r, packages}
+## here for workflow
+library(here)
+
+## tidyverse for data manipulation and plotting
+## loads several different packages simultaneously
+library(tidyverse)
+
+## readxl to import Excel data
+library(readxl)
+```
+
+# Import Data
+
+Here, we import an *Excel* data file. 
+After importing, we clean the data and compute new variables.
+This data contains information on teams of employees from a Kaggle derived dataset
+
+```{r, data}
+### import data
+## use here() to locate file in our project directory;
+## use read_excel to import the Excel data file
+team_div_orig_data <- read_excel(here("data", "IBM HR Analytics Employee Attrition & Performance.xlsx"))
+
+### examine original data
+## using glimpse() from tibble
+glimpse(team_div_orig_data)
+
+## using str() from utils
+str(team_div_orig_data)
+
+## make a working copy of the data
+team_div_work_data <- team_div_orig_data
+
+## glimpse data
+glimpse(team_div_work_data)
+
+## using str() from utils
+str(team_div_work_data)
+
+## convert numeric values to categorical and ordered variables
+team_div_work_data <- team_div_orig_data %>%
+  mutate(across(where(is.character), as_factor))
+
+### convert specific numeric variables to factors;
+### we introduce the pipe operator: %>%
+## overwrite existing data
+team_div_work_data <- team_div_work_data %>%
+  ## mutate particular variables to nominal factors
+            # select variables with vars()
+  mutate_at(vars(Education, 
+                 JobLevel),
+            # specify function to convert to nominal factors
+            as_factor) %>%
+  ## mutate particular variables to ordered factors
+            # select variables with vars()
+  mutate_at(vars(EnvironmentSatisfaction, JobInvolvement, JobSatisfaction, PerformanceRating,
+                 RelationshipSatisfaction, WorkLifeBalance, ),
+            # specify function to convert to ordered factors
+            factor, ordered = TRUE)
+
+## summary of variables
+# choose data
+team_div_work_data %>%
+  # summary statistics
+  summary()
+
+### we create a random, reproducible sample of employees
+### from the working data
+## set random seed for reproducibility
+set.seed(1)
+
+## sample 70% of employees for this working session;
+## specify the data to sample and the proportion to sample
+team_work_samp <- sample_frac(team_div_work_data, size = 0.7)
+
+### examine sampled data
+## using glimpse()
+glimpse(team_work_samp)
+
+## using str()
+str(team_work_samp)
+
+## using head() to view top set of rows;
+## specify how many top rows
+head(team_work_samp, n = 9)
+
+## using tail() to view bottom set of rows
+tail(team_work_samp, n = 12)
+
+## using dplyr methods to view specific variables and rows
+# choose data
+team_work_samp %>% 
+  # select variables
+  select(Gender, Age) %>% 
+  #slice rows
+  slice(10:15, 937:950)
+```
+
+# Plotting Continuous Variables
+
+
+```{r, num_vars}
+### count values of a single categorical variable
+## choose data
+team_work_samp %>% 
+  #count variables
+  count(JobRole)
+
+### change order of nominal factor variable
+## overwrite data
+team_work_samp <- team_work_samp %>%
+  ## order nominal factor variable by reverse count
+  mutate(JobRole = fct_rev(fct_infreq(JobRole)))
+
+### plot single categorical variable
+## choose data and mapping
+ggplot(data = team_work_samp, mapping = aes(y = JobRole)) +
+  ## choose geometry with proportion calculation
+  geom_bar(aes(x = ..prop.., group = 1)) +
+  ## label axes
+  labs(x = "Percentage", y = "Job Role") +
+  ## change format of x-axis
+  scale_x_continuous(labels = scales::percent_format())
+
+### cross-tabulate multiple categorical variables
+## specify formula input with variables from data
+xtabs(~ JobRole + Gender, data = team_work_samp)
+
+### change order of nominal factor variable
+## look at current order of levels
+levels(team_work_samp$JobRole)
+
+
+### plot multiple categorical variables;
+### plot percentage of men and women in each role
+### relative to own gender
+## choose data
+ggplot(data = team_work_samp %>%
+         # filter for only non-missing values
+         filter(!is.na(Gender)),
+       ## specify mapping
+       mapping = aes(x = JobRole, 
+                     group = Gender, 
+                     fill = Gender)) +
+  ## choose geometry with proportion calculation
+  geom_bar(aes(y = ..prop..),
+           position = "dodge") +
+  ## label mappings
+  labs(x = "Job Role", y = "Percentage", fill = "Gender") +
+  ## change format of y-axis
+  scale_y_continuous(labels = scales::percent_format()) +
+  ## add text above bars
+            # stat for geometry
+  geom_text(stat = "count", 
+                # location of label
+            aes(y = ..prop..,
+                # label and number of digits
+                label = scales::percent(..prop.., accuracy = 0.1)), 
+            # justify vertically above bar
+            vjust = -0.5, 
+            # position label above each bar
+            position = position_dodge(0.9), size = 2) +
+  ## change angle of x-axis labels
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  ## add descriptive title
+  ggtitle("Percentage of Men and Women in Each Role Relative to Own Gender")
+
+#### plot relative percentage of men and women in each role
+### manipulate data
+## choose data
+team_work_samp %>%
+  ## group by JobRole
+    group_by(JobRole) %>%
+  ## count men and women in each role
+  count(Gender) %>%
+  ## calculate percent of men and women in each role
+  mutate(pct = n/sum(n)) %>%
+  ### plot data
+  ## data passes into ggplot; 
+  ## only specify mapping
+  ggplot(mapping = aes(x = JobRole, y = pct, fill = Gender)) + 
+    ## choose geometry
+    geom_col(position = "dodge", width = 0.7) +
+    ## add labels;
+            # multiply percentage by 100 with one decimal point
+            # add percent sign and paste it together
+    geom_text(aes(label = paste0(round(pct*100, 1), "%")),
+              # justify vertically above bar
+              vjust = -0.5, 
+              # position label above each bar
+              position = position_dodge(0.7), size = 2) +
+    ## label mappings
+    labs(x = "Job Role", y = "Percentage", fill = "Gender") +
+    ## change format of y-axis
+    scale_y_continuous(labels = scales::percent_format()) +
+    ## change angle of x-axis labels
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    ## add descriptive title
+    ggtitle("Relative Percentage of Men and Women in Each Role")
+```
