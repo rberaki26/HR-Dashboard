@@ -67,4 +67,4 @@ A grouped bar chart showing the proportion of men and women in each job role, wi
 c. Relative Gender Percentages
 A second visualization showing gender percentages within each job role.
 
-These plots demonstrate your ability to communicate HR insights visually.
+These plots demonstrate my ability to communicate HR insights visually.
