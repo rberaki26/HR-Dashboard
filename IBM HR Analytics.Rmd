@@ -242,4 +242,30 @@ team_work_samp %>%
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     ## add descriptive title
     ggtitle("Relative Percentage of Men and Women in Each Role")
+
+### compute quartiles for variable
+## compute data; set percentiles
+ten_quart <- tibble(perc = c(0.25, 0.5, 0.75),
+  ## compute quantiles
+  quant = quantile(team_work_samp$TotalWorkingYears, probs = perc))
+
+### plot single categorical variable
+## choose data and mapping
+ggplot(team_work_samp, aes(x = TotalWorkingYears)) +
+  ## specify histogram geometry
+  geom_histogram(aes(y = ..density..), binwidth = 3,
+          color = "black", fill = "white") +
+  ## specify density geometry
+  geom_density(alpha = 0.3, fill = "red", color = "red") +
+  ## create quantiles data frame
+  geom_vline(data = ten_quart,
+             aes(xintercept = quant),
+             # line color and type
+             color = "blue", linetype = "dashed") +
+  ## Labels for vertical lines
+  geom_text(data = ten_quart,
+            mapping = aes(x = quant, y = 0.03,
+                  label = paste0(perc*100, "% = ", quant)),
+           size = 4, angle = 90, vjust = -0.4,
+           hjust = 0, color = "purple")
 ```
