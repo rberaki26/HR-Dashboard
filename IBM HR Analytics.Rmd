@@ -92,16 +92,16 @@ team_div_work_data <- team_div_orig_data %>%
 team_div_work_data <- team_div_work_data %>%
   ## mutate particular variables to nominal factors
             # select variables with vars()
-  mutate_at(vars(Education, 
+  mutate(across(c(Education, 
                  JobLevel),
             # specify function to convert to nominal factors
-            as_factor) %>%
+            as_factor)) %>%
   ## mutate particular variables to ordered factors
             # select variables with vars()
-  mutate_at(vars(EnvironmentSatisfaction, JobInvolvement, JobSatisfaction, PerformanceRating,
+  mutate(across(c(EnvironmentSatisfaction, JobInvolvement, JobSatisfaction, PerformanceRating,
                  RelationshipSatisfaction, WorkLifeBalance, ),
             # specify function to convert to ordered factors
-            factor, ordered = TRUE)
+            factor, ordered = TRUE))
 
 ## summary of variables
 # choose data
