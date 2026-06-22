@@ -200,7 +200,7 @@ ggplot(data = team_work_samp %>%
                 # location of label
             aes(y = after_stat (prop),
                 # label and number of digits
-                label = scales::percent(..prop.., accuracy = 0.1)), 
+                label = scales::percent(after_stat(prop), accuracy = 0.1)), 
             # justify vertically above bar
             vjust = -0.5, 
             # position label above each bar
