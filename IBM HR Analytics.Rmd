@@ -161,7 +161,7 @@ team_work_samp <- team_work_samp %>%
 ## choose data and mapping
 ggplot(data = team_work_samp, mapping = aes(y = JobRole)) +
   ## choose geometry with proportion calculation
-  geom_bar(aes(x = ..prop.., group = 1)) +
+  geom_bar(aes(x = after_stat(prop), group = 1)) +
   ## label axes
   labs(x = "Percentage", y = "Job Role") +
   ## change format of x-axis
@@ -188,7 +188,7 @@ ggplot(data = team_work_samp %>%
                      group = Gender, 
                      fill = Gender)) +
   ## choose geometry with proportion calculation
-  geom_bar(aes(y = ..prop..),
+  geom_bar(aes(y = after_stat(prop)),
            position = "dodge") +
   ## label mappings
   labs(x = "Job Role", y = "Percentage", fill = "Gender") +
@@ -198,7 +198,7 @@ ggplot(data = team_work_samp %>%
             # stat for geometry
   geom_text(stat = "count", 
                 # location of label
-            aes(y = ..prop..,
+            aes(y = after_stat (prop),
                 # label and number of digits
                 label = scales::percent(..prop.., accuracy = 0.1)), 
             # justify vertically above bar
